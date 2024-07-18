@@ -1,6 +1,5 @@
 import argparse
 import json
-from operator import ifloordiv
 
 import requests
 
@@ -13,7 +12,7 @@ def main():
     args = parser.parse_args()
 
     data = {}
-    
+
     with open(args.n) as json_file:
         data = json.load(json_file)
         print(f"Found {len(data)} items to update in {args.n}")
@@ -31,8 +30,10 @@ def update_es_index(index_name, url, id, data):
     update_req = { "doc": data}
     response = requests.post(url + f"/{index_name}/_update/{id}", headers=headers, json=update_req, verify=False)
     res = response.json()
+
     if 'error' in res:
-       print(f"Error: {res}")
+        print(f"Error: {res}")
+        raise Exception(f"Error while updating {index_name} {id}")
     elif res['result'] == "noop":
         print("NOT UPDATED (noop)")
     elif res['result'] == "updated":

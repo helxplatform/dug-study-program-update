@@ -1,0 +1,27 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: dug-study-project-update
+  labels:
+    app: dug-study-project-update
+spec:
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app: dug-study-project-update
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: dug-study-project-update
+          image: containers.renci.org/vgl/fedora_py_git:latest
+          imagePullPolicy: Always
+          command:
+            - /bin/sh
+            - -c
+            - |
+              git clone https://github.com/helxplatform/dug-study-program-update.git
+              cd ./dug-study-program-update/
+              python3 -m pip install -r requirements.txt 
+              python3 src/dugstudyprojectupdate/main.py -i "variables_index" -n "./job_sample.json" -e "https://elastic:<ENTER_HERE>@localhost:9200"
+
